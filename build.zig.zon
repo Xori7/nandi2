@@ -11,5 +11,9 @@
             .url = "https://pkg.machengine.org/mach-glfw/58a16012c33b047b9468cccb53ecd95835456121.tar.gz",
             .hash = "1220dcf8c006b5bd91bb55c732eac6d95afe16247058f31348e1e2e071dfca7923db",
         },
+        .vulkan_zig = .{
+            .url = "https://github.com/Snektron/vulkan-zig/archive/27d9b028ebedf616bc9bf49ba551bf33b3ff33a8.tar.gz",
+            .hash = "1220f9e64b39552cd4e7b7e23585daefcf82c4f37b998a1c80355b7a57ca6db79dbc",
+        }
     },
 }

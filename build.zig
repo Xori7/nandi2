@@ -3,7 +3,7 @@ const std = @import("std");
 // Although this function looks imperative, note that its job is to
 // declaratively construct a build graph that will be executed by an external
 // runner.
-pub fn build(b: *std.Build) void {
+pub fn build(b: *std.Build) !void {
     // Standard target options allows the person running `zig build` to choose
     // what target to build for. Here we do not override the defaults, which
     // means any target is allowed, and the default is native. Other options
@@ -31,6 +31,22 @@ pub fn build(b: *std.Build) void {
     });
     exe.addModule("mach-glfw", glfw_dep.module("mach-glfw"));
     try @import("mach_glfw").link(glfw_dep.builder, exe);
+
+    // Use vulkan-zig
+    const vulkan_sdk_path = try std.process.getEnvVarOwned(b.allocator, "VULKAN_SDK");
+    const vk_xml_path = try std.fs.path.resolve(
+        b.allocator,
+        &[_][]const u8{
+            vulkan_sdk_path,
+            "share/vulkan/registry/vk.xml",
+        },
+    );
+
+    const vkzig_dep = b.dependency("vulkan_zig", .{
+        .registry = @as([]const u8, vk_xml_path),
+    });
+    const vkzig_bindings = vkzig_dep.module("vulkan-zig");
+    exe.addModule("vulkan-zig", vkzig_bindings);
 
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
