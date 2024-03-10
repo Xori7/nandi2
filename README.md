@@ -1,6 +1,6 @@
 # Nandi 2
 
-## How do you build the engine?
+## How to build the engine?
 Just compile `build.c` with a `c compiler` of your choice and run the resulting executable.
 ```
 cc build.c -o build
