@@ -18,20 +18,20 @@
 //Compiler
 #ifndef COMPILER
 #   ifdef _WIN32
-#       if defined(__GNUC__)
-#           define COMPILER "gcc"
-#       elif defined(__clang__)
+#       if defined(__clang__)
 #           define COMPILER "clang"
+#       elif defined(__GNUC__)
+#           define COMPILER "gcc"
 #       elif defined(_MSC_VER)
 #           define COMPILER "cl.exe"
 #       else
 #           define COMPILER "cc"
 #       endif
 #   else
-#       if defined(__GNUC__)
-#           define COMPILER "gcc"
-#       elif defined(__clang__)
+#       if defined(__clang__)
 #           define COMPILER "clang"
+#       elif defined(__GNUC__)
+#           define COMPILER "gcc"
 #       else
 #           define COMPILER "cc"
 #       endif
@@ -54,7 +54,7 @@ const char* PLATFORM_NAMES[2] = {
 #endif // _WIN32
 #define DEFAULT_OPT_LEVEL "-O0"
 
-void make_directory();
+void make_directory(const char *path);
 void recompile(char *executableName);
 int get_file_edit_time(const char *file);
 void file_rename(const char *old, const char *new);
@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
     make_directory(BUILD_DIR"bin");
     make_directory(BUILD_DIR"include");
 
-    cmd_execute(COMPILER" "SOURCE" "OPT_LEVEL" -shared -o " BUILD_DIR"bin"PS"nandi");
+    cmd_execute(COMPILER" -shared -Wall "SOURCE" "OPT_LEVEL" -o "BUILD_DIR"bin"PS"nandi.dll");
     file_copy("."PS"src"PS"nandi.h", BUILD_DIR"include"PS"nandi.h");
 }
 
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
     fclose(configFile);
     printf("All setup done\n");
 
-    cmd_execute(COMPILER" build.c -o "BUILD_DIR"build_with_config -DWITH_CONFIG");
+    cmd_execute(COMPILER" -Wall build.c -o "BUILD_DIR"build_with_config -DWITH_CONFIG");
     cmd_execute(BUILD_DIR"build_with_config");
 }
 
@@ -132,7 +132,7 @@ void recompile(char *executableName) {
     if (get_file_edit_time("build.c") > get_file_edit_time(executableName)) {
         printf("Recompiling 'build.c'...\n");
         file_rename(executableName, BUILD_DIR"build.old");
-        cmd_execute(COMPILER" build.c -o build");
+        cmd_execute(COMPILER" -Wall build.c -o build");
         cmd_execute("."PS"build");
         exit(0);
     }
