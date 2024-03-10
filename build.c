@@ -11,10 +11,8 @@
 // Path separator
 #ifdef _WIN32
 #define PS "\\"
-#define EXE ".exe"
 #else
 #define PS "/"
-#define EXE ""
 #endif // _WIN32
 
 //Compiler
@@ -44,11 +42,11 @@
 #endif // _WIN32
 
 void make_build_directory();
-void rebuild();
+void rebuild(char *executableName);
 int get_file_edit_time(const char *file);
 void file_rename(const char *old, const char *new);
 
-#ifdef STAGE_TWO
+#ifdef WITH_CONFIG
 #include "build/config.h"
 
 int main(int argc, char **argv) {
@@ -60,7 +58,9 @@ int main(int argc, char **argv) {
 
 int main(int argc, char **argv) {
     make_build_directory();
-    rebuild();
+    if (argc > 0) {
+        rebuild(argv[0]);
+    }
 
     printf("\n---[ STAGE 1 ]---\n");
     // Create default configuration file
@@ -72,11 +72,11 @@ int main(int argc, char **argv) {
     }
     fclose(configFile);
 
-    system(COMPILER" build.c -o ."PS"build"PS"build_stage_2 -DSTAGE_TWO");
-    system("."PS"build"PS"build_stage_2"EXE);
+    system(COMPILER" build.c -o ."PS"build"PS"build_with_config -DWITH_CONFIG");
+    system("."PS"build"PS"build_with_config");
 }
 
-#endif //STAGE_2
+#endif // WITH_CONFIG
 
 void make_build_directory() {
     const char* buildPath = "."PS"build";
@@ -93,11 +93,11 @@ void make_build_directory() {
     }
 }
 
-void rebuild() {
-    if (get_file_edit_time("build.c") > get_file_edit_time("build"EXE)) {
-        file_rename("build"EXE, "build/build"EXE ".old");
+void rebuild(char *executableName) {
+    if (get_file_edit_time("build.c") > get_file_edit_time(executableName)) {
+        file_rename(executableName, "."PS"build"PS"build.old");
         system(COMPILER" build.c -o build");
-        system("."PS"build"EXE);
+        system("."PS"build");
         exit(0);
     }
 }
