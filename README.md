@@ -6,4 +6,4 @@ Just compile `build.c` with a `c compiler` of your choice and run the resulting 
 cc build.c -o build
 ./build
 ```
-Additionally in the generated `./build` folder is `config.h` file with engine build settings such as target platform, etc.
+Additionally in the generated `./build` folder, there is `config.h` file with engine build settings such as target platform, etc.
