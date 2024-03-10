@@ -1,7 +1,7 @@
 # Nandi 2
 
 ## How do you build the engine?
-All you need to do is to compile build.c file with c compiler of your choice and run build executable.
+Just compile `build.c` with a `c compiler` of your choice and run the resulting executable.
 ```
 cc build.c -o build
 ./build
