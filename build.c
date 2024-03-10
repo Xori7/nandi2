@@ -38,9 +38,13 @@
 #   endif // _WIN32
 #endif // COMPILER
 
-//Config
 #define WINDOWS 0
 #define LINUX 1
+
+const char* PLATFORM_NAMES[2] = {
+    "Windows", 
+    "Linux"
+};
 
 #ifdef _WIN32
 #define DEFAULT_PLATFORM "WINDOWS"
@@ -48,66 +52,88 @@
 #ifdef __linux__
 #define DEFAULT_PLATFORM "LINUX"
 #endif // _WIN32
-#define DEFAULT_OPT_LEVEL "0" 
+#define DEFAULT_OPT_LEVEL "-O0"
 
-void make_build_directory();
-void rebuild(char *executableName);
+void make_directory();
+void recompile(char *executableName);
 int get_file_edit_time(const char *file);
 void file_rename(const char *old, const char *new);
+void file_copy(const char *from, const char *to);
+
+void cmd_execute(const char *command) {
+    printf("[cmd] %s\n", command);
+    system(command);
+}
+
+#define BUILD_DIR "."PS"build"PS
 
 #ifdef WITH_CONFIG
 #include "build/config.h"
 
+#define SOURCE                  \
+    "src/nandi.c "              \
+    "src/example.c "
+
 int main(int argc, char **argv) {
-    printf("\n---[ STAGE 2 ]---\n");
-    printf("PLATFORM: %d", PLATFORM);
+    printf("\n---[ BUILD ]---\n");
+    printf("Configuration:\n");
+    printf("Platform: %s\n", PLATFORM_NAMES[PLATFORM]);
+    printf("Optimization: %s\n", OPT_LEVEL);
+
+    make_directory(BUILD_DIR"bin");
+    make_directory(BUILD_DIR"include");
+
+    cmd_execute(COMPILER" "SOURCE" "OPT_LEVEL" -shared -o " BUILD_DIR"bin"PS"nandi");
+    file_copy("."PS"src"PS"nandi.h", BUILD_DIR"include"PS"nandi.h");
 }
 
 #else
 
 int main(int argc, char **argv) {
-    make_build_directory();
+    make_directory(BUILD_DIR);
     if (argc > 0) {
-        rebuild(argv[0]);
+        recompile(argv[0]);
     }
 
-    printf("\n---[ STAGE 1 ]---\n");
     // Create default configuration file
-    const char* configPath = "."PS"build"PS"config.h";
+    const char* configPath = BUILD_DIR"config.h";
     FILE* configFile = fopen(configPath, "r");
     if (!configFile) {
+        printf("Generating default '%s' file...\n", configPath);
         configFile = fopen(configPath, "w");
         fprintf(configFile, "#define PLATFORM "DEFAULT_PLATFORM"\n");
-        fprintf(configFile, "#define OPT_LEVEL "DEFAULT_OPT_LEVEL"\n");
+        fprintf(configFile, "#define OPT_LEVEL \""DEFAULT_OPT_LEVEL"\"\n");
     }
     fclose(configFile);
+    printf("All setup done\n");
 
-    system(COMPILER" build.c -o ."PS"build"PS"build_with_config -DWITH_CONFIG");
-    system("."PS"build"PS"build_with_config");
+    cmd_execute(COMPILER" build.c -o "BUILD_DIR"build_with_config -DWITH_CONFIG");
+    cmd_execute(BUILD_DIR"build_with_config");
 }
 
 #endif // WITH_CONFIG
 
-void make_build_directory() {
-    const char* buildPath = "."PS"build";
-    DIR* dir = opendir(buildPath);
+void make_directory(const char *path) {
+    DIR* dir = opendir(path);
     if (dir) {
         closedir(dir);
     }
     else {
+        printf("Creating '%s' directory...\n", path);
     #ifdef _WIN32
-        CreateDirectory(buildPath, NULL);
+        CreateDirectory(path, NULL);
     #else 
-        mkdir(buildPath, 0700); 
+        mkdir(path, 0700); 
     #endif // _WIN32
     }
 }
 
-void rebuild(char *executableName) {
+void recompile(char *executableName) {
     if (get_file_edit_time("build.c") > get_file_edit_time(executableName)) {
-        file_rename(executableName, "."PS"build"PS"build.old");
-        system(COMPILER" build.c -o build");
-        system("."PS"build");
+        printf("Recompiling 'build.c'...\n");
+        file_rename(executableName, BUILD_DIR"build.old");
+        cmd_execute(COMPILER" build.c -o build");
+        cmd_execute("."PS"build");
         exit(0);
     }
 }
@@ -133,3 +159,24 @@ void file_rename(const char *old, const char *new) {
     }
 #endif // _WIN32
 }
+
+void file_copy(const char *src, const char *dst) {
+    FILE* srcFile = fopen(src, "r");
+    FILE* dstFile = fopen(dst, "w");
+
+    if (srcFile) {
+        fseek(srcFile, 0, SEEK_END);
+        long length = ftell(srcFile);
+        fseek(srcFile, 0, SEEK_SET);
+        char *buffer = malloc(length);
+        if (buffer) {
+            fread(buffer, 1, length, srcFile);
+        }
+        fwrite(buffer, 1, length, dstFile);
+        free(buffer);
+    }
+
+    fclose(srcFile);
+    fclose(dstFile);
+}
+
