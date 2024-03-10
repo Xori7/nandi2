@@ -48,6 +48,7 @@
 #ifdef __linux__
 #define DEFAULT_PLATFORM "LINUX"
 #endif // _WIN32
+#define DEFAULT_OPT_LEVEL "0" 
 
 void make_build_directory();
 void rebuild(char *executableName);
@@ -76,7 +77,8 @@ int main(int argc, char **argv) {
     FILE* configFile = fopen(configPath, "r");
     if (!configFile) {
         configFile = fopen(configPath, "w");
-        fprintf(configFile, "#define PLATFORM "DEFAULT_PLATFORM);
+        fprintf(configFile, "#define PLATFORM "DEFAULT_PLATFORM"\n");
+        fprintf(configFile, "#define OPT_LEVEL "DEFAULT_OPT_LEVEL"\n");
     }
     fclose(configFile);
 
