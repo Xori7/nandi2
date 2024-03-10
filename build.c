@@ -24,9 +24,17 @@
 #           define COMPILER "clang"
 #       elif defined(_MSC_VER)
 #           define COMPILER "cl.exe"
+#       else
+#           define COMPILER "cc"
 #       endif
 #   else
-#      define COMPILER "cc"
+#       if defined(__GNUC__)
+#           define COMPILER "gcc"
+#       elif defined(__clang__)
+#           define COMPILER "clang"
+#       else
+#           define COMPILER "cc"
+#       endif
 #   endif // _WIN32
 #endif // COMPILER
 
