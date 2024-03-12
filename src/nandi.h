@@ -4,8 +4,10 @@
 #include "../build/config.h"
 
 /* Nandi String */
+#ifndef NSTRING_IMPL
 typedef char* NString;
+#endif // NSTRING_IMPL
 
-char* nandi_string_new();
+NString nandi_string_new();
 
 #endif //NANDI_H
