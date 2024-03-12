@@ -70,9 +70,8 @@ void cmd_execute(const char *command) {
 #ifdef WITH_CONFIG
 #include "build/config.h"
 
-#define SOURCE                  \
-    "src/nandi.c "              \
-    "src/example.c "
+#define SOURCE \
+    "src/nstring.c "
 
 int main(int argc, char **argv) {
     printf("\n---[ BUILD ]---\n");
