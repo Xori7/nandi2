@@ -1,27 +1,29 @@
 #include "nandi.h"
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
-    U32 length;
+    uint32_t length;
+    n_allocator_t *allocator;
     char buffer[1];
-} *INStringWrapped;
+} i_n_string_wrapped_t;
 
-INStringWrapped nandi_string_wrapped_new(U32 length);
-INStringWrapped nandi_string_wrapped_new(U32 length) {
-    INStringWrapped stringWrapped = malloc(sizeof(*stringWrapped) + length);
-    stringWrapped->length = length;
-    stringWrapped->buffer[length] = 0;
-    return stringWrapped;
+i_n_string_wrapped_t *n_string_wrapped_new(n_allocator_t *allocator, uint32_t length) {
+    i_n_string_wrapped_t *wrapped = n_memory_allocator_alloc(allocator, sizeof(*wrapped) + length);
+    wrapped->length = length;
+    wrapped->allocator = allocator;
+    wrapped->buffer[length] = 0;
+    return wrapped;
 }
 
-NString nandi_string_get_empty() {
-    INStringWrapped string;
-    string = nandi_string_wrapped_new(0);
-    return string->buffer;
+n_string_t n_string_from_cstring(n_allocator_t *allocator, const char *cstring) {
+    i_n_string_wrapped_t *wrapped;
+    wrapped = n_string_wrapped_new(allocator, strlen(cstring));
+    strcpy(wrapped->buffer, cstring);
+    return (n_string_t)wrapped->buffer;
 }
 
-NString nandi_string_get_from_cstring(char *cstring) {
-    INStringWrapped string;
-    string = nandi_string_wrapped_new(0);
-    return string->buffer;
+void n_string_dispose(n_string_t string) {
+    i_n_string_wrapped_t *wrapped = (i_n_string_wrapped_t*)(string - ((i_n_string_wrapped_t*)0)->buffer);
+    n_memory_allocator_free(wrapped->allocator, wrapped);
 }

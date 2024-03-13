@@ -71,7 +71,8 @@ void cmd_execute(const char *command) {
 #include "build/config.h"
 
 #define SOURCE \
-    "src/nstring.c "
+    "src/nstring.c " \
+    "src/nmemory.c "
 
 int main(int argc, char **argv) {
     printf("\n---[ BUILD ]---\n");
