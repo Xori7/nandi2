@@ -1,3 +1,8 @@
+#define SOURCE \
+    "src/nstring.c " \
+    "src/nmemory.c " \
+    "src/nthreading_windows.c " 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -69,10 +74,6 @@ void cmd_execute(const char *command) {
 
 #ifdef WITH_CONFIG
 #include "build/config.h"
-
-#define SOURCE \
-    "src/nstring.c " \
-    "src/nmemory.c "
 
 int main(int argc, char **argv) {
     printf("\n---[ BUILD ]---\n");
