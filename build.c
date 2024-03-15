@@ -2,7 +2,8 @@
     SOURCE_X(src/nstring.c) \
     SOURCE_X(src/nmemory.c) \
     SOURCE_X(src/nthreading_windows.c) \
-    SOURCE_X(src/nlog.c)
+    SOURCE_X(src/nlog.c) \
+    SOURCE_X(src/ntest.c)
 
 #define SOURCE_X(s) #s" "
 const char *SOURCE = SOURCE_FILES;
@@ -10,11 +11,21 @@ const char *SOURCE = SOURCE_FILES;
 
 const char *TEST_C = 
 "#include \"include/nandi.h\"\n"
-"#include <stdio.h>\n"
-"int main(int argc, char **argv) {\n"
+
+"#define TEST_INCLUDE\n"
 #define SOURCE_X(s) "#include \"../"#s"\"\n"
 SOURCE_FILES
 #undef SOURCE_X
+"#undef TEST_INCLUDE\n"
+
+"int main(int argc, char **argv) {\n"
+
+"#define TEST_IMPL\n"
+#define SOURCE_X(s) "#include \"../"#s"\"\n"
+SOURCE_FILES
+#undef SOURCE_X
+"#undef TEST_IMPL\n"
+
 "return 0;\n"
 "}";
 
@@ -95,10 +106,10 @@ int main(int argc, char **argv) {
     printf("Configuration:\n");
     printf("Platform: %s\n", PLATFORM_NAMES[PLATFORM]);
     printf("Optimization: %s\n", OPT_LEVEL);
-#ifdef TEST
-    printf("Test: Defined\n");
+#ifdef TEST 
+    printf("Test: Yes\n");
 #else
-    printf("Test: Not defined\n");
+    printf("Test: No\n");
 #endif // TEST
 
     make_directory(BUILD_DIR"bin");
