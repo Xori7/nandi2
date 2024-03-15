@@ -1,3 +1,4 @@
+#ifndef TEST_BUILD
 #include "nandi.h"
 
 /*allocator*/
@@ -30,7 +31,9 @@ const n_allocator_t I_DEFAULT_ALLOCATOR = {
     .free_fn = &i_default_allocator_free,
 };
 
-const n_allocator_t *n_memory_default_allocator_get() {
+const n_allocator_t *n_memory_default_allocator_get(void) {
     return &I_DEFAULT_ALLOCATOR;
 }
 // default_allocator
+
+#endif // TEST_BUILD

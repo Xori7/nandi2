@@ -1,6 +1,8 @@
+#ifndef TEST_BUILD
 #include "nandi.h"
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 extern char *n_string_format_args(n_allocator_t *allocator, const char *format, va_list args) {
     size_t length;
@@ -21,3 +23,4 @@ extern char *n_string_format(n_allocator_t *allocator, const char *format, ...) 
     va_end(args);
     return result;
 }
+#endif //TEST_BUILD

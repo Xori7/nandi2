@@ -1,3 +1,4 @@
+#ifndef TEST_BUILD
 #include "nandi.h"
 
 #if PLATFORM == WINDOWS
@@ -16,11 +17,11 @@ extern void n_threading_thread_terminate(n_thread_t thread, int exitCode) {
     TerminateThread(thread, exitCode);
 }
 
-extern n_thread_t n_threading_get_current_thread() {
+extern n_thread_t n_threading_get_current_thread(void) {
     return GetCurrentThread();
 }
 
-extern uint64_t n_threading_get_current_thread_id(n_thread_t thread) {
+extern uint64_t n_threading_get_current_thread_id(void) {
     return GetCurrentThreadId();
 }
 
@@ -50,3 +51,4 @@ extern bool_t n_threading_mutex_release(n_mutex_t mutex) {
 }
 
 #endif // PLATFORM == WINDOWS
+#endif // TEST_BUILD

@@ -1,7 +1,37 @@
-#define SOURCE \
-    "src/nstring.c " \
-    "src/nmemory.c " \
-    "src/nthreading_windows.c " 
+#define SOURCE_FILES \
+    SOURCE_X(src/nstring.c) \
+    SOURCE_X(src/nmemory.c) \
+    SOURCE_X(src/nthreading_windows.c) \
+    SOURCE_X(src/nlog.c)
+
+#define SOURCE_X(s) #s" "
+const char *SOURCE = SOURCE_FILES;
+#undef SOURCE_X
+
+const char *TEST_C = 
+"#include \"include/nandi.h\"\n"
+"#include <stdio.h>\n"
+"int main(int argc, char **argv) {\n"
+#define SOURCE_X(s) "#include \"../"#s"\"\n"
+SOURCE_FILES
+#undef SOURCE_X
+"return 0;\n"
+"}";
+
+#define WINDOWS 0
+#define LINUX 1
+const char* PLATFORM_NAMES[2] = {
+    "Windows", 
+    "Linux"
+};
+
+#ifdef _WIN32
+#define DEFAULT_PLATFORM "WINDOWS"
+#endif // _WIN32
+#ifdef __linux__
+#define DEFAULT_PLATFORM "LINUX"
+#endif // _WIN32
+#define DEFAULT_OPT_LEVEL "-O0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,27 +73,12 @@
 #   endif // _WIN32
 #endif // COMPILER
 
-#define WINDOWS 0
-#define LINUX 1
-
-const char* PLATFORM_NAMES[2] = {
-    "Windows", 
-    "Linux"
-};
-
-#ifdef _WIN32
-#define DEFAULT_PLATFORM "WINDOWS"
-#endif // _WIN32
-#ifdef __linux__
-#define DEFAULT_PLATFORM "LINUX"
-#endif // _WIN32
-#define DEFAULT_OPT_LEVEL "-O0"
-
 void make_directory(const char *path);
 void recompile(char *executableName);
 int get_file_edit_time(const char *file);
 void file_rename(const char *old, const char *new);
 void file_copy(const char *from, const char *to);
+char *string_format(const char *format, ...);
 
 void cmd_execute(const char *command) {
     printf("[cmd] %s\n", command);
@@ -80,12 +95,25 @@ int main(int argc, char **argv) {
     printf("Configuration:\n");
     printf("Platform: %s\n", PLATFORM_NAMES[PLATFORM]);
     printf("Optimization: %s\n", OPT_LEVEL);
+#ifdef TEST
+    printf("Test: Defined\n");
+#else
+    printf("Test: Not defined\n");
+#endif // TEST
 
     make_directory(BUILD_DIR"bin");
     make_directory(BUILD_DIR"include");
 
-    cmd_execute(COMPILER" -shared -Wall "SOURCE" "OPT_LEVEL" -o "BUILD_DIR"bin"PS"nandi.dll");
+    cmd_execute(string_format(COMPILER" -Wall %s %s -g -shared -o %s", SOURCE, OPT_LEVEL, BUILD_DIR"bin"PS"nandi.dll"));
     file_copy("."PS"src"PS"nandi.h", BUILD_DIR"include"PS"nandi.h");
+
+#ifdef TEST
+    FILE* testFile = fopen(BUILD_DIR"test.c", "w");
+    fprintf(testFile, "%s", TEST_C);
+    fclose(testFile);
+    cmd_execute(string_format(COMPILER" -Wall %s %s -DTEST_BUILD -L"BUILD_DIR"bin -lnandi -o %s", BUILD_DIR"test.c", OPT_LEVEL, BUILD_DIR"bin"PS"test"));
+    cmd_execute(BUILD_DIR"bin"PS"test");
+#endif // TEST
 }
 
 #else
@@ -104,6 +132,7 @@ int main(int argc, char **argv) {
         configFile = fopen(configPath, "w");
         fprintf(configFile, "#define PLATFORM "DEFAULT_PLATFORM"\n");
         fprintf(configFile, "#define OPT_LEVEL \""DEFAULT_OPT_LEVEL"\"\n");
+        fprintf(configFile, "#define TEST\n");
     }
     fclose(configFile);
     printf("All setup done\n");
@@ -166,18 +195,30 @@ void file_copy(const char *src, const char *dst) {
     FILE* dstFile = fopen(dst, "w");
 
     if (srcFile) {
-        fseek(srcFile, 0, SEEK_END);
-        long length = ftell(srcFile);
-        fseek(srcFile, 0, SEEK_SET);
-        char *buffer = malloc(length);
-        if (buffer) {
-            fread(buffer, 1, length, srcFile);
-        }
-        fwrite(buffer, 1, length, dstFile);
-        free(buffer);
+        char c = fgetc(srcFile); 
+        while (c != EOF) 
+        { 
+            fputc(c, dstFile); 
+            c = fgetc(srcFile); 
+        } 
     }
 
     fclose(srcFile);
     fclose(dstFile);
+}
+
+char *string_format(const char *format, ...) {
+    va_list args;
+    size_t length;
+    char *space;
+
+    va_start(args, format);
+    length = vsnprintf(NULL, 0, format, args);
+    if ((space = malloc(length + 1)) != NULL) {
+        vsnprintf(space, length + 1, format, args);
+        return space;
+    }
+    va_end(args);
+    return NULL;
 }
 
