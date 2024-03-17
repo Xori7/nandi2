@@ -3,7 +3,9 @@
     SOURCE_X(src/nmemory.c) \
     SOURCE_X(src/nthreading_windows.c) \
     SOURCE_X(src/nlog.c) \
-    SOURCE_X(src/ntest.c)
+    SOURCE_X(src/ntest.c) \
+    SOURCE_X(src/nwindow_windows.c) \
+    SOURCE_X(src/ninput_windows.c)
 
 #define SOURCE_X(s) #s" "
 const char *SOURCE = SOURCE_FILES;
@@ -115,7 +117,7 @@ int main(int argc, char **argv) {
     make_directory(BUILD_DIR"bin");
     make_directory(BUILD_DIR"include");
 
-    cmd_execute(string_format(COMPILER" -Wall %s %s -g -shared -o %s", SOURCE, OPT_LEVEL, BUILD_DIR"bin"PS"nandi.dll"));
+    cmd_execute(string_format(COMPILER" -Wall %s %s -g -lcomctl32 -shared -o %s", SOURCE, OPT_LEVEL, BUILD_DIR"bin"PS"nandi.dll"));
     file_copy("."PS"src"PS"nandi.h", BUILD_DIR"include"PS"nandi.h");
 
 #ifdef TEST

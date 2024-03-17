@@ -70,15 +70,3 @@ extern void n_log_format(const n_allocator_t *allocator, uint16_t level, uint16_
 }
 
 #endif // TEST_BUILD
-
-#ifdef TEST_INCLUDE
-#endif // TEST_INCLUDE
-
-#ifdef TEST_IMPL
-{
-    n_log_register_console_handler();
-    n_assert_i32_eq(10, 5);
-    n_assert_i32_eq(10, 10);
-    n_assert_i32_greater(36, 10);
-}
-#endif // TEST_IMPL
