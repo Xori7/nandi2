@@ -81,13 +81,6 @@ typedef enum {
     LL_COUNT
 } n_log_level_enum;
 
-static const char *N_LOG_LEVEL_NAMES[] = {
-    "INFO",
-    "WARN",
-    "ERRO",
-    "TEST"
-};
-
 typedef struct {
     uint16_t level;
     uint16_t category;

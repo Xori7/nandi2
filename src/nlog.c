@@ -4,7 +4,14 @@
 #include <time.h>
 #include <stdarg.h>
 
-n_log_handler_t handlers[N_LOG_MAX_HANDLERS_COUNT] = { 0 };
+static const char *N_LOG_LEVEL_NAMES[] = {
+    "INFO",
+    "WARN",
+    "ERRO",
+    "TEST"
+};
+
+static n_log_handler_t handlers[N_LOG_MAX_HANDLERS_COUNT] = { 0 };
 
 static void i_n_log_console_handler(n_log_data_t logData, void *customData) {
     printf("[%s][%d] %s", N_LOG_LEVEL_NAMES[logData.level], logData.category, logData.message);
