@@ -5,7 +5,7 @@
     SOURCE_X(src/nlog.c) \
     SOURCE_X(src/ntest.c) \
     SOURCE_X(src/nwindow_windows.c) \
-    SOURCE_X(src/ninput_windows.c)
+    SOURCE_X(src/ninput_windows.c) \
 
 #define SOURCE_X(s) #s" "
 const char *SOURCE = SOURCE_FILES;
@@ -21,7 +21,7 @@ SOURCE_FILES
 "#undef TEST_INCLUDE\n"
 
 "int main(int argc, char **argv) {\n"
-
+"n_log_register_console_handler();\n"
 "#define TEST_IMPL\n"
 #define SOURCE_X(s) "#include \"../"#s"\"\n"
 SOURCE_FILES
