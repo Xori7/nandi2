@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
     make_directory(BUILD_DIR"bin");
     make_directory(BUILD_DIR"include");
 
-#define SOURCE_X(s) if (get_file_edit_time("src/"#s".c") > get_file_edit_time("build/bin/"#s".o")) { \
+#define SOURCE_X(s) if (get_file_edit_time("src/"#s".c") > get_file_edit_time("build/bin/"#s".o") || get_file_edit_time("src/nandi.h") > get_file_edit_time("build/bin/"#s".o")) { \
 cmd_execute(string_format(COMPILER" -Wall src/"#s".c "OPT_LEVEL" -c -o ./build/bin/"#s".o")); \
 cmd_execute(string_format(COMPILER" -Wall src/"#s".c "OPT_LEVEL" -S -o ./build/bin/"#s".nasm")); \
 }

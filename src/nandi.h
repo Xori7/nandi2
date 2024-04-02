@@ -35,6 +35,7 @@ void n_memory_allocator_free(const n_allocator_t *allocator, void *ptr);
 
 const n_allocator_t *n_memory_get_default_allocator(void);
 
+
 /*************************
 Module: NString
 Source: nstring.c
@@ -429,6 +430,12 @@ extern bool_t n_input_key_down(n_key_code_enum keyCode);
 extern bool_t n_input_key_up(n_key_code_enum keyCode);
 extern vec2u32_t n_input_cursor_position();
 extern int32_t n_input_mouse_wheel();
+
+/*************************
+Module: 
+Source: .c
+*************************/
+
 
 // vi: ft=c
 
