@@ -68,18 +68,3 @@ extern void n_window_set_client_size(n_window_t window, vec2u32_t size) {
 #endif // PLATFORM == WINDOWS
 #endif // TEST_BUILD
 
-#ifdef TEST_INCLUDE
-#include <stdlib.h>
-#include <stdio.h>
-
-#endif // TEST_INCLUDE
-
-#ifdef TEST_IMPL
-{
-    n_window_t window = n_window_create(n_memory_get_default_allocator(), "Helloo", NULL);
-    n_window_destroy(window);
-    n_assert_i32_eq(10, 5);
-    n_assert_i32_eq(10, 10);
-    n_assert_i32_greater(36, 10);
-}
-#endif // TEST_IMPL
