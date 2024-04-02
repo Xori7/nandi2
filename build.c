@@ -1,21 +1,34 @@
 #define SOURCE_FILES \
-    SOURCE_X(src/nstring.c) \
-    SOURCE_X(src/nmemory.c) \
-    SOURCE_X(src/nthreading_windows.c) \
-    SOURCE_X(src/nlog.c) \
-    SOURCE_X(src/ntest.c) \
-    SOURCE_X(src/nwindow_windows.c) \
-    SOURCE_X(src/ninput_windows.c) \
+    SOURCE_X(nstring) \
+    SOURCE_X(nmemory) \
+    SOURCE_X(nthreading_windows) \
+    SOURCE_X(nlog) \
+    SOURCE_X(ntest) \
+    SOURCE_X(nwindow_windows) \
+    SOURCE_X(ninput_windows) \
 
-#define SOURCE_X(s) #s" "
+// Path separator
+#ifdef _WIN32
+#define PS "\\"
+#else
+#define PS "/"
+#endif // _WIN32
+
+#define BUILD_DIR "."PS"build"PS
+
+#define SOURCE_X(s) "src/"#s".c "
 const char *SOURCE = SOURCE_FILES;
+#undef SOURCE_X
+
+#define SOURCE_X(s) BUILD_DIR"bin/"#s".o "
+const char *OBJECT = SOURCE_FILES;
 #undef SOURCE_X
 
 const char *TEST_C = 
 "#include \"include/nandi.h\"\n"
 
 "#define TEST_INCLUDE\n"
-#define SOURCE_X(s) "#include \"../"#s"\"\n"
+#define SOURCE_X(s) "#include \"../src/"#s".c\"\n"
 SOURCE_FILES
 #undef SOURCE_X
 "#undef TEST_INCLUDE\n"
@@ -23,7 +36,7 @@ SOURCE_FILES
 "int main(int argc, char **argv) {\n"
 "n_log_register_console_handler();\n"
 "#define TEST_IMPL\n"
-#define SOURCE_X(s) "#include \"../"#s"\"\n"
+#define SOURCE_X(s) "#include \"../src/"#s".c\"\n"
 SOURCE_FILES
 #undef SOURCE_X
 "#undef TEST_IMPL\n"
@@ -54,13 +67,6 @@ const char* PLATFORM_NAMES[2] = {
 
 #ifdef _WIN32
 #include <windows.h>
-#endif // _WIN32
-
-// Path separator
-#ifdef _WIN32
-#define PS "\\"
-#else
-#define PS "/"
 #endif // _WIN32
 
 //Compiler
@@ -98,8 +104,6 @@ void cmd_execute(const char *command) {
     system(command);
 }
 
-#define BUILD_DIR "."PS"build"PS
-
 #ifdef WITH_CONFIG
 #include "build/config.h"
 
@@ -117,7 +121,14 @@ int main(int argc, char **argv) {
     make_directory(BUILD_DIR"bin");
     make_directory(BUILD_DIR"include");
 
-    cmd_execute(string_format(COMPILER" -Wall %s %s -g -lcomctl32 -shared -o %s", SOURCE, OPT_LEVEL, BUILD_DIR"bin"PS"nandi.dll"));
+#define SOURCE_X(s) if (get_file_edit_time("src/"#s".c") > get_file_edit_time("build/bin/"#s".o")) { \
+cmd_execute(string_format(COMPILER" -Wall src/"#s".c "OPT_LEVEL" -c -o ./build/bin/"#s".o")); \
+cmd_execute(string_format(COMPILER" -Wall src/"#s".c "OPT_LEVEL" -S -o ./build/bin/"#s".nasm")); \
+}
+
+SOURCE_FILES
+#undef SOURCE_X
+    cmd_execute(string_format(COMPILER" %s -lcomctl32 -shared -o %s", OBJECT, BUILD_DIR"bin"PS"nandi.dll"));
     file_copy("."PS"src"PS"nandi.h", BUILD_DIR"include"PS"nandi.h");
 
 #ifdef TEST
