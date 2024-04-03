@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
     make_directory(BUILD_DIR"include");
 
 #define SOURCE_X(s) if (get_file_edit_time("src/"#s".c") > get_file_edit_time("build/bin/"#s".o") || get_file_edit_time("src/nandi.h") > get_file_edit_time("build/bin/"#s".o")) { \
-cmd_execute(string_format(COMPILER" -Wall src/"#s".c "OPT_LEVEL" -c -o ./build/bin/"#s".o")); \
+cmd_execute(string_format(COMPILER" -Wall src/"#s".c "OPT_LEVEL" -c -g -o ./build/bin/"#s".o")); \
 cmd_execute(string_format(COMPILER" -Wall src/"#s".c "OPT_LEVEL" -S -o ./build/bin/"#s".nasm")); \
 }
 
@@ -136,7 +136,7 @@ SOURCE_FILES
     FILE* testFile = fopen(BUILD_DIR"test.c", "w");
     fprintf(testFile, "%s", TEST_C);
     fclose(testFile);
-    cmd_execute(string_format(COMPILER" -Wall %s %s -DTEST_BUILD -L"BUILD_DIR"bin -lnandi -o %s", BUILD_DIR"test.c", OPT_LEVEL, BUILD_DIR"bin"PS"test"));
+    cmd_execute(string_format(COMPILER" -Wall %s %s -DTEST_BUILD -L"BUILD_DIR"bin -lnandi -g -o %s", BUILD_DIR"test.c", OPT_LEVEL, BUILD_DIR"bin"PS"test"));
     cmd_execute(BUILD_DIR"bin"PS"test");
 #endif // TEST
 }

@@ -10,7 +10,8 @@ typedef struct {
 } i_n_list_wrapped_t;
 
 static i_n_list_wrapped_t *i_n_list_wrap(void *list) {
-    return (i_n_list_wrapped_t*)(list - (void*)&(((i_n_list_wrapped_t*)0)->buffer));
+    i_n_list_wrapped_t *p = (i_n_list_wrapped_t*)(list - (void*)&((i_n_list_wrapped_t*)0)->buffer);
+    return p;
 }
 
 void i_n_list_set_length(void *list, uint32_t length) {
