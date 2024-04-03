@@ -46,33 +46,81 @@ extern uint32_t n_list_capacity(void *list) {
     return i_n_list_wrap(list)->capacity;
 }
 
-// #define i_n_list_remove(list, element)
-// #define i_n_list_remove_ordered(list, element)
-// #define n_list_index_of(list, element)
 // extern void n_list_sort(void *list);
 // extern void n_list_trim_excess(void *list);
 // extern void n_list_destroy(void *list);
 #endif // TEST_BUILD
 
 #ifdef TEST_IMPL
-{
-    LIST(int) list = n_list_create(n_memory_get_default_allocator(), sizeof(int32_t), 4);
+TEST("New list length equals 0") {
+    LIST(uint32_t) list = n_list_create(n_memory_get_default_allocator(), sizeof(*list), 1);
     n_assert_u32_eq(0, n_list_length(list));
-    n_list_add(list, 33);
-    n_assert_u32_eq(1, n_list_length(list));
-    n_assert_u32_eq(33, list[0]);
-    n_list_add(list, 33);
-    n_list_add(list, 33);
-    n_list_add(list, 69);
-    n_list_add(list, 122);
-    n_assert_u32_eq(69, list[3]);
-    n_list_add_at(list, 420, 1);
-    n_assert_u32_eq(420, list[1]);
-    n_assert_u32_eq(33, list[2]);
-    n_assert_u32_eq(69, list[4]);
-    n_list_clear(list);
-    n_assert_u32_eq(0, n_list_length(list));
-    n_assert_u32_eq(8, n_list_capacity(list));
 }
+
+TEST("After add length increases by 1") {
+    LIST(uint32_t) list = n_list_create(n_memory_get_default_allocator(), sizeof(*list), 1);
+    n_assert_u32_eq(0, n_list_length(list));
+    n_list_add(list, 12);
+    n_assert_u32_eq(1, n_list_length(list));
+    n_list_add(list, 10002341);
+    n_assert_u32_eq(2, n_list_length(list));
+}
+
+TEST("After add values in the list are correct") {
+    LIST(uint32_t) list = n_list_create(n_memory_get_default_allocator(), sizeof(*list), 1);
+    n_list_add(list, 12);
+    n_list_add(list, 10002341);
+    n_assert_u32_eq(12, list[0]);
+    n_assert_u32_eq(10002341, list[1]);
+}
+
+TEST("After more then capacity adds capacity doubles") {
+    uint32_t capacity = 4;
+    LIST(uint32_t) list = n_list_create(n_memory_get_default_allocator(), sizeof(*list), capacity);
+    for (uint32_t i = 0; i < capacity + 1; i++) {
+        n_list_add(list, 7);
+    }
+    n_assert_u32_eq(capacity * 2, n_list_capacity(list));
+}
+
+TEST("add_at sets correct element values") {
+    uint32_t capacity = 4;
+    LIST(uint32_t) list = n_list_create(n_memory_get_default_allocator(), sizeof(*list), capacity);
+    n_list_add(list, 0);
+    n_list_add(list, 1);
+    n_list_add(list, 3);
+    n_list_add(list, 4);
+    n_list_add_at(list, 2, 2);
+    n_assert_u32_eq(0, list[0]);
+    n_assert_u32_eq(1, list[1]);
+    n_assert_u32_eq(2, list[2]);
+    n_assert_u32_eq(3, list[3]);
+    n_assert_u32_eq(4, list[4]);
+}
+
+TEST("remove_at sets correct element values") {
+    LIST(uint32_t) list = n_list_create(n_memory_get_default_allocator(), sizeof(*list), 4);
+    n_list_add(list, 0);
+    n_list_add(list, 3);
+    n_list_add(list, 1);
+    n_list_add(list, 2);
+    n_list_remove_at(list, 1);
+    n_assert_u32_eq(0, list[0]);
+    n_assert_u32_eq(2, list[1]);
+    n_assert_u32_eq(1, list[2]);
+}
+
+TEST("remove_at_ordered sets correct element values") {
+    LIST(uint32_t) list = n_list_create(n_memory_get_default_allocator(), sizeof(*list), 4);
+    n_list_add(list, 0);
+    n_list_add(list, 3);
+    n_list_add(list, 1);
+    n_list_add(list, 2);
+    n_list_remove_at_ordered(list, 1);
+    n_assert_u32_eq(0, list[0]);
+    n_assert_u32_eq(1, list[1]);
+    n_assert_u32_eq(2, list[2]);
+}
+
 #endif // TEST_IMPL
 

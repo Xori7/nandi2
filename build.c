@@ -37,6 +37,7 @@ SOURCE_FILES
 "int main(int argc, char **argv) {\n"
 "n_log_register_console_handler();\n"
 "#define TEST_IMPL\n"
+"#define TEST(name) n_log(LL_TEST, 0, name\"\\n\");\n"
 #define SOURCE_X(s) "#include \"../src/"#s".c\"\n"
 SOURCE_FILES
 #undef SOURCE_X
@@ -113,11 +114,11 @@ int main(int argc, char **argv) {
     printf("Configuration:\n");
     printf("Platform: %s\n", PLATFORM_NAMES[PLATFORM]);
     printf("Optimization: %s\n", OPT_LEVEL);
-#ifdef TEST 
-    printf("Test: Yes\n");
+#ifdef TEST_ENABLED
+    printf("Test enabled: Yes\n");
 #else
-    printf("Test: No\n");
-#endif // TEST
+    printf("Test enabled: No\n");
+#endif // TEST_ENABLED
 
     make_directory(BUILD_DIR"bin");
     make_directory(BUILD_DIR"include");
@@ -132,13 +133,13 @@ SOURCE_FILES
     cmd_execute(string_format(COMPILER" %s -lcomctl32 -shared -o %s", OBJECT, BUILD_DIR"bin"PS"nandi.dll"));
     file_copy("."PS"src"PS"nandi.h", BUILD_DIR"include"PS"nandi.h");
 
-#ifdef TEST
+#ifdef TEST_ENABLED
     FILE* testFile = fopen(BUILD_DIR"test.c", "w");
     fprintf(testFile, "%s", TEST_C);
     fclose(testFile);
     cmd_execute(string_format(COMPILER" -Wall %s %s -DTEST_BUILD -L"BUILD_DIR"bin -lnandi -g -o %s", BUILD_DIR"test.c", OPT_LEVEL, BUILD_DIR"bin"PS"test"));
     cmd_execute(BUILD_DIR"bin"PS"test");
-#endif // TEST
+#endif // TEST_ENABLED
 }
 
 #else
@@ -157,7 +158,7 @@ int main(int argc, char **argv) {
         configFile = fopen(configPath, "w");
         fprintf(configFile, "#define PLATFORM "DEFAULT_PLATFORM"\n");
         fprintf(configFile, "#define OPT_LEVEL \""DEFAULT_OPT_LEVEL"\"\n");
-        fprintf(configFile, "#define TEST\n");
+        fprintf(configFile, "#define TEST_ENABLED\n");
     }
     fclose(configFile);
     printf("All setup done\n");
