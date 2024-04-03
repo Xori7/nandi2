@@ -1,6 +1,7 @@
 #define SOURCE_FILES \
     SOURCE_X(nstring) \
     SOURCE_X(nmemory) \
+    SOURCE_X(nlist) \
     SOURCE_X(nthreading_windows) \
     SOURCE_X(nlog) \
     SOURCE_X(ntest) \

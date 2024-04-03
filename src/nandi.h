@@ -29,12 +29,38 @@ struct i_n_allocator_t {
     n_free_tfn free_fn;
 };
 
-void *n_memory_allocator_alloc(const n_allocator_t *allocator, size_t size);
-void *n_memory_allocator_realloc(const n_allocator_t *allocator, void *ptr, size_t size);
-void n_memory_allocator_free(const n_allocator_t *allocator, void *ptr);
+extern void *n_memory_allocator_alloc(const n_allocator_t *allocator, size_t size);
+extern void *n_memory_allocator_realloc(const n_allocator_t *allocator, void *ptr, size_t size);
+extern void n_memory_allocator_free(const n_allocator_t *allocator, void *ptr);
 
 const n_allocator_t *n_memory_get_default_allocator(void);
 
+/*************************
+Module: NList
+Source: nlist.c
+*************************/
+#define LIST(type) type *
+
+extern void *n_list_create(const n_allocator_t *allocator, size_t elementSize, uint32_t capacity);
+void i_n_list_set_length(void *list, uint32_t length);
+#define n_list_add(list, element) i_n_list_set_length(list, n_list_length(list) + 1); list[n_list_length(list) - 1] = element;
+#define n_list_add_at(list, element, index) i_n_list_set_length(list, n_list_length(list) + 1); \
+for (uint32_t i = n_list_length(list) - 2; i >= index; i--) { \
+list[i + 1] = list[i]; \
+} \
+list[index] = element;
+
+#define n_list_remove(list, element)
+#define n_list_remove_ordered(list, element)
+#define n_list_remove_at(list, index)
+#define n_list_remove_at_ordered(list, index)
+#define n_list_index_of(list, element)
+extern uint32_t n_list_length(void *list);
+extern uint32_t n_list_capacity(void *list);
+extern void n_list_clear(void *list);
+extern void n_list_sort(void *list);
+extern void n_list_trim_excess(void *list);
+extern void n_list_destroy(void *list);
 
 /*************************
 Module: NString
