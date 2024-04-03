@@ -16,6 +16,7 @@
 #endif // _WIN32
 
 #define BUILD_DIR "."PS"build"PS
+#define CONFIG_PATH BUILD_DIR"config.h"
 
 #define SOURCE_X(s) "src/"#s".c "
 const char *SOURCE = SOURCE_FILES;
@@ -142,7 +143,7 @@ SOURCE_FILES
 #endif // TEST_ENABLED
 }
 
-#else
+#else // WITH_CONFIG
 
 int main(int argc, char **argv) {
     make_directory(BUILD_DIR);
@@ -151,11 +152,10 @@ int main(int argc, char **argv) {
     }
 
     // Create default configuration file
-    const char* configPath = BUILD_DIR"config.h";
-    FILE* configFile = fopen(configPath, "r");
+    FILE* configFile = fopen(CONFIG_PATH, "r");
     if (!configFile) {
-        printf("Generating default '%s' file...\n", configPath);
-        configFile = fopen(configPath, "w");
+        printf("Generating default '%s' file...\n", CONFIG_PATH);
+        configFile = fopen(CONFIG_PATH, "w");
         fprintf(configFile, "#define PLATFORM "DEFAULT_PLATFORM"\n");
         fprintf(configFile, "#define OPT_LEVEL \""DEFAULT_OPT_LEVEL"\"\n");
         fprintf(configFile, "#define TEST_ENABLED\n");
@@ -163,7 +163,6 @@ int main(int argc, char **argv) {
     fclose(configFile);
     printf("All setup done\n");
 
-    cmd_execute(COMPILER" -Wall build.c -o "BUILD_DIR"build_with_config -DWITH_CONFIG");
     cmd_execute(BUILD_DIR"build_with_config");
 }
 
@@ -185,10 +184,14 @@ void make_directory(const char *path) {
 }
 
 void recompile(char *executableName) {
-    if (get_file_edit_time("build.c") > get_file_edit_time(executableName)) {
+    if (get_file_edit_time("build.c") > get_file_edit_time(executableName) 
+        || get_file_edit_time(CONFIG_PATH) > get_file_edit_time(executableName)) {
         printf("Recompiling 'build.c'...\n");
         file_rename(executableName, BUILD_DIR"build.old");
+
         cmd_execute(COMPILER" -Wall build.c -o build");
+        cmd_execute(COMPILER" -Wall build.c -o "BUILD_DIR"build_with_config -DWITH_CONFIG");
+
         cmd_execute("."PS"build");
         exit(0);
     }
@@ -199,6 +202,7 @@ int get_file_edit_time(const char *file) {
 
     if (stat(file, &fileStat) < 0) {
         printf("Failed to get file \'%s\' stats", file);
+        return 0;
     }
     return fileStat.st_mtime;
 
