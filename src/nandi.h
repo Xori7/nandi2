@@ -41,8 +41,7 @@ Source: nlist.c
 *************************/
 #define NLIST(T) T *
 
-extern void *n_list_create(const n_allocator_t *allocator, size_t elementSize, uint32_t capacity);
-
+extern void     *n_list_create(const n_allocator_t *allocator, size_t elementSize, uint32_t capacity);
 extern void     *i_n_list_add_at(void **list, uint32_t index);
 extern void     *i_n_list_add(void **list);
 extern void     i_n_list_trim_excess(void **list);
@@ -122,9 +121,9 @@ typedef struct {
 extern uint32_t n_log_register_console_handler(void);
 extern uint32_t n_log_register_file_handler(const char *file);
 extern uint32_t n_log_register_handler(n_log_handler_t handler);
-extern void n_log_unregister_handler(n_log_handler_t handler);
-extern void n_log(uint16_t level, uint16_t category, char *message);
-extern void n_log_format(const n_allocator_t *allocator, uint16_t level, uint16_t category, char *format, ...);
+extern void     n_log_unregister_handler(n_log_handler_t handler);
+extern void     n_log(uint16_t level, uint16_t category, char *message);
+extern void     n_log_format(const n_allocator_t *allocator, uint16_t level, uint16_t category, char *format, ...);
 
 /*************************
 Module: NTest
@@ -177,9 +176,9 @@ struct i_n_window_t {
     n_window_size_changed_tfn on_size_changed_fn;
 };
 
-extern n_window_t n_window_create(const n_allocator_t *allocator, const char *title, n_window_size_changed_tfn onSizeChangedFn);
-extern void n_window_destroy(n_window_t window);
-extern void n_window_set_client_size(n_window_t window, vec2u32_t size);
+extern n_window_t   n_window_create(const n_allocator_t *allocator, const char *title, n_window_size_changed_tfn onSizeChangedFn);
+extern void         n_window_set_client_size(n_window_t window, vec2u32_t size);
+extern void         n_window_destroy(n_window_t window);
 
 /*************************
 Module: NInput
