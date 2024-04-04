@@ -26,26 +26,39 @@ const char *SOURCE = SOURCE_FILES;
 const char *OBJECT = SOURCE_FILES;
 #undef SOURCE_X
 
+///////////////////////////////////////////////////////
+// Test source file generation
+///////////////////////////////////////////////////////
 const char *TEST_C = 
 "#include \"include/nandi.h\"\n"
 
-"#define TEST_INCLUDE\n"
 #define SOURCE_X(s) "#include \"../src/"#s".c\"\n"
+
+"#define TEST_INCLUDE\n"
 SOURCE_FILES
-#undef SOURCE_X
 "#undef TEST_INCLUDE\n"
+
+#undef SOURCE_X
 
 "int main(int argc, char **argv) {\n"
 "n_log_register_console_handler();\n"
-"#define TEST_IMPL\n"
+
 "#define TEST(name) n_log(LL_TEST, 0, name\"\\n\");\n"
-#define SOURCE_X(s) "#include \"../src/"#s".c\"\n"
+
+#define SOURCE_X(s)                                     \
+"{\n"                                                   \
+"#include \"../src/"#s".c\"\n"                          \
+"}\n"
+
+"#define TEST_IMPL\n"
 SOURCE_FILES
-#undef SOURCE_X
 "#undef TEST_IMPL\n"
+
+#undef SOURCE_X
 
 "return 0;\n"
 "}";
+//////////////////////////////////////////////////////
 
 #define WINDOWS 0
 #define LINUX 1
@@ -163,9 +176,7 @@ int main(int argc, char **argv) {
     fclose(configFile);
     printf("All setup done\n");
 
-    if (get_file_edit_time(CONFIG_PATH) > get_file_edit_time(argv[0])) {
-        cmd_execute(COMPILER" -Wall build.c -o "BUILD_DIR"build_with_config -DWITH_CONFIG");
-    }
+    cmd_execute(COMPILER" -Wall build.c -o "BUILD_DIR"build_with_config -DWITH_CONFIG");
     cmd_execute(BUILD_DIR"build_with_config");
 }
 
