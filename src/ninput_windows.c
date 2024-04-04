@@ -24,33 +24,33 @@ typedef struct {
     i_n_key_state_t keys[256];
 } input_data_t;
 
-input_data_t inputData = {0};
+input_data_t input_data = {0};
 
 void process_input_message(n_input_message_type_enum type, uint32_t data) {
     switch (type) {
         case N_KEY_DOWN:
         case N_MOUSE_BUTTON_DOWN:
             data &= 0xff;
-            inputData.keys[data].changed = 1;
-            inputData.keys[data].is_pressed = 1;
+            input_data.keys[data].changed = 1;
+            input_data.keys[data].is_pressed = 1;
             break;
         case N_KEY_UP:
         case N_MOUSE_BUTTON_UP:
             data &= 0xff;
-            inputData.keys[data].changed = 1;
-            inputData.keys[data].is_pressed = 0;
+            input_data.keys[data].changed = 1;
+            input_data.keys[data].is_pressed = 0;
             break;
         case N_CURSOR_MOVE:
-            inputData.cursor_position.x = data & 0xffff;
-            inputData.cursor_position.y = data >> 16;
+            input_data.cursor_position.x = data & 0xffff;
+            input_data.cursor_position.y = data >> 16;
             break;
         case N_MOUSE_WHEEL:
-            inputData.mouse_wheel = (int32_t)data;
+            input_data.mouse_wheel = (int32_t)data;
             break;
     }
 }
 
-extern void n_input_update() {
+extern void n_input_update(void) {
     MSG msg = {0};
     while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
         switch(msg.message){
@@ -95,23 +95,23 @@ extern void n_input_update() {
 }
 
 extern bool_t n_input_key(n_key_code_enum keyCode) {
-    return inputData.keys[keyCode].is_pressed;
+    return input_data.keys[keyCode].is_pressed;
 }
 
 extern bool_t n_input_key_down(n_key_code_enum keyCode) {
-    return inputData.keys[keyCode].is_pressed && inputData.keys[keyCode].changed;
+    return input_data.keys[keyCode].is_pressed && input_data.keys[keyCode].changed;
 }
 
 extern bool_t n_input_key_up(n_key_code_enum keyCode) {
-    return !inputData.keys[keyCode].is_pressed && inputData.keys[keyCode].changed;
+    return !input_data.keys[keyCode].is_pressed && input_data.keys[keyCode].changed;
 }
 
-extern vec2u32_t n_input_cursor_position() {
-    return inputData.cursor_position;
+extern vec2u32_t n_input_cursor_position(void) {
+    return input_data.cursor_position;
 }
 
-extern int32_t n_input_mouse_wheel() {
-    return inputData.mouse_wheel;
+extern int32_t n_input_mouse_wheel(void) {
+    return input_data.mouse_wheel;
 }
 
 #endif // PLATFORM == WINDOWS

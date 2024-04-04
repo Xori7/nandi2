@@ -443,12 +443,12 @@ typedef enum {
     KC_Packet = 0xE7, //IDK man try to google it
 } n_key_code_enum;
 
-extern void n_input_update();
-extern bool_t n_input_key(n_key_code_enum keyCode);
-extern bool_t n_input_key_down(n_key_code_enum keyCode);
-extern bool_t n_input_key_up(n_key_code_enum keyCode);
-extern vec2u32_t n_input_cursor_position();
-extern int32_t n_input_mouse_wheel();
+extern void         n_input_update(void);
+extern bool_t       n_input_key(n_key_code_enum keyCode);
+extern bool_t       n_input_key_down(n_key_code_enum keyCode);
+extern bool_t       n_input_key_up(n_key_code_enum keyCode);
+extern vec2u32_t    n_input_cursor_position(void);
+extern int32_t      n_input_mouse_wheel(void);
 
 /*************************
 Module: 
