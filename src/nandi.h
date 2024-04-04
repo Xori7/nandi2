@@ -43,7 +43,10 @@ Source: nlist.c
 
 extern void *n_list_create(const n_allocator_t *allocator, size_t elementSize, uint32_t capacity);
 void i_n_list_set_length(void *list, uint32_t length);
-#define n_list_add(list, element) i_n_list_set_length(list, n_list_length(list) + 1); list[n_list_length(list) - 1] = element;
+#define n_list_add(list, element) do {                              \
+    i_n_list_set_length(list, n_list_length(list) + 1);             \
+    list[n_list_length(list) - 1] = element;                        \
+}while(0);
 #define n_list_add_at(list, element, index) do {                    \
     i_n_list_set_length(list, n_list_length(list) + 1);             \
     for (uint32_t i = n_list_length(list) - 2; i >= index; i--) {   \

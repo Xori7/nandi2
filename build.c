@@ -163,6 +163,9 @@ int main(int argc, char **argv) {
     fclose(configFile);
     printf("All setup done\n");
 
+    if (get_file_edit_time(CONFIG_PATH) > get_file_edit_time(argv[0])) {
+        cmd_execute(COMPILER" -Wall build.c -o "BUILD_DIR"build_with_config -DWITH_CONFIG");
+    }
     cmd_execute(BUILD_DIR"build_with_config");
 }
 
@@ -184,14 +187,10 @@ void make_directory(const char *path) {
 }
 
 void recompile(char *executableName) {
-    if (get_file_edit_time("build.c") > get_file_edit_time(executableName) 
-        || get_file_edit_time(CONFIG_PATH) > get_file_edit_time(executableName)) {
+    if (get_file_edit_time("build.c") > get_file_edit_time(executableName)) {
         printf("Recompiling 'build.c'...\n");
         file_rename(executableName, BUILD_DIR"build.old");
-
         cmd_execute(COMPILER" -Wall build.c -o build");
-        cmd_execute(COMPILER" -Wall build.c -o "BUILD_DIR"build_with_config -DWITH_CONFIG");
-
         cmd_execute("."PS"build");
         exit(0);
     }

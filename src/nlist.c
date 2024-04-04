@@ -84,8 +84,7 @@ TEST("After more then capacity adds capacity doubles") {
 }
 
 TEST("add_at sets correct element values") {
-    uint32_t capacity = 4;
-    LIST(uint32_t) list = n_list_create(n_memory_get_default_allocator(), sizeof(*list), capacity);
+    LIST(uint32_t) list = n_list_create(n_memory_get_default_allocator(), sizeof(*list), 1);
     n_list_add(list, 0);
     n_list_add(list, 1);
     n_list_add(list, 3);
