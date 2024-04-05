@@ -42,12 +42,12 @@ Source: nlist.c
 #define NLIST(T) T *
 
 extern void     *n_list_create(const n_allocator_t *allocator, size_t elementSize, uint32_t capacity);
-extern void     *i_n_list_add_at(void **list, uint32_t index);
-extern void     *i_n_list_add(void **list);
-extern void     i_n_list_trim_excess(void **list);
-#define         n_list_add_at(list, T, index, value) *((T*)i_n_list_add_at((void**)&list, index)) = value
-#define         n_list_add(list, T, value) *(T*)i_n_list_add((void**)&list) = value
-#define         n_list_trim_excess(list) i_n_list_trim_excess((void**)&list);
+extern void     *i_n_list_add_at(void **list/*RW*/, uint32_t index);
+extern void     *i_n_list_add(void **list/*RW*/);
+extern void     i_n_list_trim_excess(void **list/*RW*/);
+#define         n_list_add_at(list/*RW*/, T, index, value) *((T*)i_n_list_add_at((void**)&list, index)) = value
+#define         n_list_add(list/*RW*/, T, value) *(T*)i_n_list_add((void**)&list) = value
+#define         n_list_trim_excess(list/*RW*/) i_n_list_trim_excess((void**)&list);
 extern void     n_list_remove_at(void *list, uint32_t index);
 extern void     n_list_remove_at_ordered(void *list, uint32_t index);
 extern uint32_t n_list_length(void *list);
@@ -179,6 +179,21 @@ struct i_n_window_t {
 extern n_window_t   n_window_create(const n_allocator_t *allocator, const char *title, n_window_size_changed_tfn onSizeChangedFn);
 extern void         n_window_set_client_size(n_window_t window, vec2u32_t size);
 extern void         n_window_destroy(n_window_t window);
+
+/*************************
+Module: NGraphics
+Source: ngraphics.c
+*************************/
+//extern NGraphicsContext n_graphics_initialize(NLogger logger, NWindow window);
+//extern void             n_graphics_recreate_swap_chain(NGraphicsContext *context, NWindow window);
+//extern void             n_graphics_cleanup(NGraphicsContext *context);
+//extern void             n_graphics_draw_frame(NGraphicsContext *context);
+//extern NMaterial        *n_graphics_material_create(NGraphicsContext *context, NMaterialCreateInfo createInfo);
+//extern void             n_graphics_material_destroy(NGraphicsContext *context, NMaterial *material);
+//extern NMesh            *n_graphics_mesh_create(NGraphicsContext *context, NMaterial *material, NList vertices, NList indices);
+//extern void             n_graphics_mesh_destroy(NGraphicsContext *context, NMesh *mesh);
+//extern NTexture         n_graphics_texture_create(NGraphicsContext *context, const char *path);
+//extern void             n_graphics_texture_destroy(NGraphicsContext *context, NTexture texture);
 
 /*************************
 Module: NInput
@@ -449,12 +464,6 @@ extern bool_t       n_input_key_down(n_key_code_enum keyCode);
 extern bool_t       n_input_key_up(n_key_code_enum keyCode);
 extern vec2u32_t    n_input_cursor_position(void);
 extern int32_t      n_input_mouse_wheel(void);
-
-/*************************
-Module: 
-Source: .c
-*************************/
-
 
 // vi: ft=c
 
