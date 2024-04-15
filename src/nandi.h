@@ -17,23 +17,16 @@ typedef uint8_t bool_t;
 Module: NMemory
 Source: nmemory.c
 *************************/
-typedef struct i_n_allocator_t n_allocator_t;
+typedef const void *n_allocator_t;
 
-typedef void *(*n_alloc_tfn)(const n_allocator_t *allocator, size_t size);
-typedef void *(*n_realloc_tfn)(const n_allocator_t *allocator, void *ptr, size_t size);
-typedef void (*n_free_tfn)(const n_allocator_t *allocator, void *ptr);
+typedef void *(*n_alloc_tfn)(n_allocator_t allocator, size_t size);
+typedef void *(*n_realloc_tfn)(n_allocator_t allocator, void *ptr, size_t size);
+typedef void (*n_free_tfn)(n_allocator_t allocator, void *ptr);
 
-struct i_n_allocator_t {
-    n_alloc_tfn alloc_fn;
-    n_realloc_tfn realloc_fn;
-    n_free_tfn free_fn;
-};
-
-extern void *n_memory_allocator_alloc(const n_allocator_t *allocator, size_t size);
-extern void *n_memory_allocator_realloc(const n_allocator_t *allocator, void *ptr, size_t size);
-extern void n_memory_allocator_free(const n_allocator_t *allocator, void *ptr);
-
-const n_allocator_t *n_memory_get_default_allocator(void);
+extern void *n_memory_allocator_alloc(n_allocator_t allocator, size_t size);
+extern void *n_memory_allocator_realloc(n_allocator_t allocator, void *ptr, size_t size);
+extern void n_memory_allocator_free(n_allocator_t allocator, void *ptr);
+extern n_allocator_t n_memory_get_default_allocator(void);
 
 /*************************
 Module: NList
@@ -41,7 +34,7 @@ Source: nlist.c
 *************************/
 #define NLIST(T) T *
 
-extern void     *n_list_create(const n_allocator_t *allocator, size_t elementSize, uint32_t capacity);
+extern void     *n_list_create(n_allocator_t allocator, size_t elementSize, uint32_t capacity);
 extern void     *i_n_list_add_at(void **list/*RW*/, uint32_t index);
 extern void     *i_n_list_add(void **list/*RW*/);
 extern void     i_n_list_trim_excess(void **list/*RW*/);
@@ -59,8 +52,8 @@ extern void     n_list_destroy(void *list);
 Module: NString
 Source: nstring.c
 *************************/
-extern char *n_string_format_args(const n_allocator_t *allocator, const char *format, va_list args);
-extern char *n_string_format(const n_allocator_t *allocator, const char *format, ...);
+extern char *n_string_format_args(n_allocator_t allocator, const char *format, va_list args);
+extern char *n_string_format(n_allocator_t allocator, const char *format, ...);
 
 /*************************
 Module: NThreading
@@ -123,7 +116,7 @@ extern uint32_t n_log_register_file_handler(const char *file);
 extern uint32_t n_log_register_handler(n_log_handler_t handler);
 extern void     n_log_unregister_handler(n_log_handler_t handler);
 extern void     n_log(uint16_t level, uint16_t category, char *message);
-extern void     n_log_format(const n_allocator_t *allocator, uint16_t level, uint16_t category, char *format, ...);
+extern void     n_log_format(n_allocator_t allocator, uint16_t level, uint16_t category, char *format, ...);
 
 /*************************
 Module: NTest
@@ -165,25 +158,20 @@ typedef struct {
 Module: NWindow
 Source: nwindow_windows.c
 *************************/
-typedef struct i_n_window_t *n_window_t;
+typedef void *n_window_t;
 typedef void (*n_window_size_changed_tfn)(n_window_t window);
 
-struct i_n_window_t {
-    const n_allocator_t *allocator;
-    const void *handle;
-    const char *title;
-    vec2u32_t size;
-    n_window_size_changed_tfn on_size_changed_fn;
-};
-
-extern n_window_t   n_window_create(const n_allocator_t *allocator, const char *title, n_window_size_changed_tfn onSizeChangedFn);
+extern n_window_t   n_window_create(n_allocator_t allocator, const char *title, n_window_size_changed_tfn onSizeChangedFn);
 extern void         n_window_set_client_size(n_window_t window, vec2u32_t size);
+extern const void   *n_window_get_handle(n_window_t window);
 extern void         n_window_destroy(n_window_t window);
 
 /*************************
 Module: NGraphics
-Source: ngraphics.c
+Source: ngraphics_vulkan.c
 *************************/
+// extern n_graphics_context_t n_graphics_context_create(n_window_t);
+// extern n_graphics_context_t n_graphics_context_destroy();
 //extern NGraphicsContext n_graphics_initialize(NLogger logger, NWindow window);
 //extern void             n_graphics_recreate_swap_chain(NGraphicsContext *context, NWindow window);
 //extern void             n_graphics_cleanup(NGraphicsContext *context);

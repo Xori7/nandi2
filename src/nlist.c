@@ -3,7 +3,7 @@
 #include "string.h"
 
 typedef struct {
-    const n_allocator_t *allocator;
+    n_allocator_t allocator;
     size_t element_size;
     uint32_t capacity;
     uint32_t length;
@@ -28,7 +28,7 @@ static void *i_get_index_ptr(i_n_list_wrapped_t *wrapped, uint32_t index) {
     return ((void*)&wrapped[1]) + index * wrapped->element_size;
 }
 
-extern void *n_list_create(const n_allocator_t *allocator, size_t elementSize, uint32_t capacity) {
+extern void *n_list_create(n_allocator_t allocator, size_t elementSize, uint32_t capacity) {
     i_n_list_wrapped_t *wrapped = n_memory_allocator_alloc(allocator, sizeof(*wrapped) + capacity * elementSize);
     wrapped->allocator = allocator;
     wrapped->element_size = elementSize;

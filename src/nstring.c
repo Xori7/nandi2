@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-extern char *n_string_format_args(const n_allocator_t *allocator, const char *format, va_list args) {
+extern char *n_string_format_args(n_allocator_t allocator, const char *format, va_list args) {
     size_t length;
     char *space;
 
@@ -16,7 +16,7 @@ extern char *n_string_format_args(const n_allocator_t *allocator, const char *fo
     return NULL;
 }
 
-extern char *n_string_format(const n_allocator_t *allocator, const char *format, ...) {
+extern char *n_string_format(n_allocator_t allocator, const char *format, ...) {
     va_list args;
     va_start(args, format);
     char *result = n_string_format_args(allocator, format, args);

@@ -67,7 +67,7 @@ extern void n_log(uint16_t level, uint16_t category, char *message) {
     handlers_invoke(log_data);
 }
 
-extern void n_log_format(const n_allocator_t *allocator, uint16_t level, uint16_t category, char *format, ...) {
+extern void n_log_format(n_allocator_t allocator, uint16_t level, uint16_t category, char *format, ...) {
     va_list args;
     va_start(args, format);
     char *message = n_string_format_args(allocator, format, args);

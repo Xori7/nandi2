@@ -3,7 +3,7 @@
 #include <stdarg.h>
 
 void i_n_test_assert(const char *testName, int32_t testLine, bool_t condition, const char *format1, const char *format2, ...) {
-    const n_allocator_t *allocator = n_memory_get_default_allocator();
+    n_allocator_t allocator = n_memory_get_default_allocator();
     if (condition == 1) {
         n_log_format(allocator, LL_TEST, 0, ANSI_COLOR_GREEN"%s:%d has passed\n"ANSI_COLOR_RESET, testName, testLine);
     } else {
