@@ -170,18 +170,19 @@ extern void         n_window_destroy(n_window_t window);
 Module: NGraphics
 Source: ngraphics_vulkan.c
 *************************/
-// extern n_graphics_context_t n_graphics_context_create(n_window_t);
-// extern n_graphics_context_t n_graphics_context_destroy();
-//extern NGraphicsContext n_graphics_initialize(NLogger logger, NWindow window);
-//extern void             n_graphics_recreate_swap_chain(NGraphicsContext *context, NWindow window);
-//extern void             n_graphics_cleanup(NGraphicsContext *context);
-//extern void             n_graphics_draw_frame(NGraphicsContext *context);
-//extern NMaterial        *n_graphics_material_create(NGraphicsContext *context, NMaterialCreateInfo createInfo);
-//extern void             n_graphics_material_destroy(NGraphicsContext *context, NMaterial *material);
-//extern NMesh            *n_graphics_mesh_create(NGraphicsContext *context, NMaterial *material, NList vertices, NList indices);
-//extern void             n_graphics_mesh_destroy(NGraphicsContext *context, NMesh *mesh);
-//extern NTexture         n_graphics_texture_create(NGraphicsContext *context, const char *path);
-//extern void             n_graphics_texture_destroy(NGraphicsContext *context, NTexture texture);
+
+typedef void *n_graphics_t;
+
+extern n_graphics_t n_graphics_initialize(n_window_t window);
+extern void         n_graphics_recreate_swap_chain(n_graphics_t context, n_window_t window);
+extern void         n_graphics_cleanup(n_graphics_t context);
+extern void         n_graphics_draw_frame(n_graphics_t context);
+// extern NMaterial        *n_graphics_material_create(n_graphics_t context, NMaterialCreateInfo createInfo);
+// extern void             n_graphics_material_destroy(n_graphics_t context, NMaterial *material);
+// extern NMesh            *n_graphics_mesh_create(n_graphics_t context, NMaterial *material, NList vertices, NList indices);
+// extern void             n_graphics_mesh_destroy(n_graphics_t context, NMesh *mesh);
+// extern n_texture_t  n_graphics_texture_create(n_graphics_t context, const char *path);
+// extern void         n_graphics_texture_destroy(n_graphics_t context, n_texture_t texture);
 
 /*************************
 Module: NInput

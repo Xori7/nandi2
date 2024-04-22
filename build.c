@@ -22,10 +22,6 @@
 const char *SOURCE = SOURCE_FILES;
 #undef SOURCE_X
 
-#define SOURCE_X(s) BUILD_DIR"bin/"#s".o "
-const char *OBJECT = SOURCE_FILES;
-#undef SOURCE_X
-
 ///////////////////////////////////////////////////////
 // Test source file generation
 ///////////////////////////////////////////////////////
@@ -135,16 +131,11 @@ int main(int argc, char **argv) {
 #endif // TEST_ENABLED
 
     make_directory(BUILD_DIR"bin");
+    make_directory(BUILD_DIR"obj");
     make_directory(BUILD_DIR"include");
 
-#define SOURCE_X(s) if (get_file_edit_time("src/"#s".c") > get_file_edit_time("build/bin/"#s".o") || get_file_edit_time("src/nandi.h") > get_file_edit_time("build/bin/"#s".o")) { \
-cmd_execute(string_format(COMPILER" -Wall src/"#s".c "OPT_LEVEL" -c -g -o ./build/bin/"#s".o")); \
-cmd_execute(string_format(COMPILER" -Wall src/"#s".c "OPT_LEVEL" -S -o ./build/bin/"#s".nasm")); \
-}
-
-SOURCE_FILES
-#undef SOURCE_X
-    cmd_execute(string_format(COMPILER" %s -lcomctl32 -shared -o %s", OBJECT, BUILD_DIR"bin"PS"nandi.dll"));
+    cmd_execute(string_format("cd ./build/obj/ && "COMPILER" -Wall "OPT_LEVEL" -c -gsplit-dwarf ../../src/*.c"));
+    cmd_execute(string_format(COMPILER" ./build/obj/*.o -lcomctl32 -shared -o %s", BUILD_DIR"bin"PS"nandi.dll"));
     file_copy("."PS"src"PS"nandi.h", BUILD_DIR"include"PS"nandi.h");
 
 #ifdef TEST_ENABLED
